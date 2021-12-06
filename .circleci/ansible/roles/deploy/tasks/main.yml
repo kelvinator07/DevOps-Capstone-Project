@@ -1,0 +1,58 @@
+---
+- name: Update apt packages
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: "upgrade packages"
+  become: yes
+  apt:
+    upgrade: yes
+
+- name: remove dependencies that are no longer required
+  become: yes
+  apt:
+    autoremove: yes
+
+- name: "install dependencies."
+  become: true
+  apt:
+    name: ["nodejs", "npm", "python3", "tar", "gzip", "git"]
+    state: latest
+    update_cache: yes
+
+- name: "install pm2"
+  become: true
+  npm:
+    name: pm2
+    global: yes
+    production: yes
+    state: present
+
+- name: Creates directory
+  file:
+    path: /home/ubuntu/nodeapp
+    state: directory
+
+- name: Copy backend dist files web server
+  copy:
+    src: /root/project/artifact.tar.gz
+    dest: /home/ubuntu/nodeapp/artifact.tar.gz
+
+- name: Uncompress Backend
+  shell: |
+    cd /home/ubuntu/nodeapp
+    tar xvzf artifact.tar.gz -C .
+    ls -la
+    
+- name: Build and Start PM2
+  shell: |
+    cd /home/ubuntu/nodeapp 
+    npm install
+    pm2 start npm --name nodeapp -- start
+
+- name: save your list of processes
+  shell: |
+    cd /home/ubuntu/nodeapp
+    pm2 save  
+    

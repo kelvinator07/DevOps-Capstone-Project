@@ -1,0 +1,3 @@
+Repository link: https://github.com/kelvinator07/DevOps-Capstone-Project
+
+URL: http://devopscapstone-alb-42371226.us-east-1.elb.amazonaws.com/
